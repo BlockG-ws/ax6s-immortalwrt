@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt x86_64
+name: Build immortalwrt
 
 on:
   repository_dispatch:
@@ -21,12 +21,10 @@ on:
 
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-21.02
+  REPO_BRANCH: v24.10.1
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: x86_64.config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: false
+  CONFIG_FILE: ax6s.config
+  UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
@@ -120,26 +118,16 @@ jobs:
           prefix: ${{ github.workspace }}/openwrt
           mixkey: 'x86-64'
 
-      - name: Load custom feeds
-        run: |
-          [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-          chmod +x $DIY_P1_SH
-          cd openwrt
-          $GITHUB_WORKSPACE/$DIY_P1_SH
-
       - name: Update feeds
         run: cd openwrt && ./scripts/feeds update -a
 
       - name: Install feeds
-        run: cd openwrt && ./scripts/feeds install -a -f -p my_packages && ./scripts/feeds install -a -p passwall_packages && ./scripts/feeds install -a
+        run: cd openwrt && ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
           [ -e files ] && mv files openwrt/files
           [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-          chmod +x $DIY_P2_SH
-          cd openwrt
-          $GITHUB_WORKSPACE/$DIY_P2_SH
 
       - name: SSH connection to Actions
         uses: mxschmitt/action-tmate@v3
@@ -153,6 +141,11 @@ jobs:
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
+
+      - name: Tweak ip
+        run: |
+          cd openwrt
+          sed -i 's/192.168.1.1/192.168.0.1/g' package/base-files/files/bin/config_generate
 
       - name: Compile the firmware
         id: compile
@@ -204,7 +197,7 @@ jobs:
           commit: main
           artifacts: ${{ env.FIRMWARE }}/*
           body: |
-            - 默认IP：10.10.10.100 默认密码：password
+            - 默认IP：192.168.0.1 无密码
             - 当前使用版本:【编译前的最后一次[➦主源码](https://github.com/immortalwrt/immortalwrt/tree/openwrt-21.02)更新记录】
             ${{ env.useVersionInfo }}
 
@@ -213,12 +206,3 @@ jobs:
         with:
           retain_days: 7
           keep_minimum_runs: 10
-
-      - name: Remove old Releases
-        uses: dev-drprasad/delete-older-releases@v0.3.4
-        if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-        with:
-          keep_latest: 3
-          delete_tags: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

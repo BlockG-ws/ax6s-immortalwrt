@@ -7,11 +7,12 @@ building ImmortalWrt with GitHub Actions
 ## Firmware usage
 Two variant is available at 'releases' section.
 - ax6s: with luci material theme, dae and ddns-go
-- ax6s-xray: with xray instead of dae
+- ax6s-xray: with xray instead of dae (you may install dae manually)
+- ax6s-simple: with adblock-fast & smartdns instead of dae (you may install xray/dae manually)
 
 simply download `immortalwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin` for first install & `immortalwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb` for upgrade.
 
-> NOTE: do not try the dae of the dae variant unless you have enough memory!
+> NOTE: do not try to use the dae & xray core on the router unless you have enough memory!
 
 ## Usage
 

@@ -2,13 +2,13 @@
 
 [![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/P3TERX/Actions-OpenWrt/blob/master/LICENSE)
 
-building ImmortalWrt with GitHub Actions
+ImmortalWrt for Redmi AX6s with GitHub Actions
 
 ## Firmware usage
-Two variant is available at 'releases' section.
-- ax6s: with luci material theme, dae and ddns-go
-- ax6s-xray: with xray instead of dae (you may install dae manually)
-- ax6s-simple: with adblock-fast & smartdns instead of dae (you may install xray/dae manually)
+Three variants is available at 'releases' section.
+- ax6s: with luci material theme, dae (with native kernel support) and ddns-go
+- ax6s-xray: with xray (with tproxy support, but you still need to configure the route and firewall manually) instead of dae (you may install dae manually)
+- **ax6s-simple** (recommended for the original hardware): with adblock-fast & smartdns instead of dae (you may install xray/dae manually)
 
 simply download `immortalwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-factory.bin` for first install & `immortalwrt-mediatek-mt7622-xiaomi_redmi-router-ax6s-squashfs-sysupgrade.itb` for upgrade.
 

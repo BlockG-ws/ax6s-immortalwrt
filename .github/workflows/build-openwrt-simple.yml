@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build immortalwrt (xray variant)
+name: Build immortalwrt (simple variant)
 
 on:
   repository_dispatch:
@@ -23,12 +23,12 @@ env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: v24.10.1
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: ax6s.xray.config
+  CONFIG_FILE: ax6s.simple.config
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  FILE_NAME: ax6s-xray
+  FILE_NAME: ax6s-simple
 
 jobs:
   build:
@@ -203,9 +203,10 @@ jobs:
 
       - name: Notify
         if: steps.compile.outputs.status == 'success'
+        shell: bash
         env:
           BOT_TOKEN: ${{ secrets.telegram_bot_token }}
-        run: curl -sSL https://api.telegram.org/bot$BOT_TOKEN/sendMessage?chat_id=-1001997284793&text=WRT+Build+success
+        run: curl -sSL https://api.telegram.org/bot$BOT_TOKEN/sendMessage?chat_id=-1001997284793&text=$FILE_NAME+Build+successful
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2

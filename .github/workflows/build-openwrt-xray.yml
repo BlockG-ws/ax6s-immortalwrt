@@ -200,12 +200,13 @@ jobs:
             - 默认IP：192.168.0.1 无密码
             - 当前使用版本:【[${{ env.REPO_BRANCH }}](https://github.com/immortalwrt/immortalwrt/tree/${{ env.REPO_BRANCH }})更新记录】
             ${{ env.useVersionInfo }}
-
+            
       - name: Notify
         if: steps.compile.outputs.status == 'success'
+        shell: bash
         env:
           BOT_TOKEN: ${{ secrets.telegram_bot_token }}
-        run: curl -sSL https://api.telegram.org/bot$BOT_TOKEN/sendMessage?chat_id=-1001997284793&text=WRT+Build+success
+        run: curl -sSL https://api.telegram.org/bot$BOT_TOKEN/sendMessage?chat_id=-1001997284793&text=$FILE_NAME+Build+successful
 
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@v2
